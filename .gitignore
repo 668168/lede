@@ -32,3 +32,4 @@ git-src
 .vscode*
 build.log
 *gz
+file/etc-origin

@@ -12,6 +12,29 @@ uci commit fstab
 
 
 ################################
+# 
+# 默认wifi系列（本机使用可以用files大法，文件是etc/config下wireless）
+# 修改的文件为 /trunk/package/kernel/mac80211/files/lib/wifi
+# set wireless.radio${devidx}=wifi-device
+# set wireless.radio${devidx}.type=mac80211
+# set wireless.radio${devidx}.channel=1   -------指定频道
+# set wireless.radio${devidx}.hwmode=11g  -------指定11g模式
+# set wireless.radio${devidx}.country=CN  -------指定国家
+# set wireless.radio${devidx}.htmode=HT40 -------40MHz带宽（单改无效，还需要改上面iw phy "$dev" info | grep -q 'Capabilities:' && htmode=HT40）
+# set wireless.radio${devidx}.legacy_rates=1
+# set wireless.radio${devidx}.noscan=1    -------强制40MHz带宽（默认无，需要添加）
+# ${dev_id}
+# ${ht_capab}
+# set wireless.radio${devidx}.disabled=0  --------改为0默认开无线
+# 
+# set wireless.default_radio${devidx}=wifi-iface
+# set wireless.default_radio${devidx}.device=radio${devidx}
+# set wireless.default_radio${devidx}.network=lan
+# set wireless.default_radio${devidx}.mode=ap
+# set wireless.default_radio${devidx}.ssid=IOU              ---------指定SSID
+# set wireless.default_radio${devidx}.encryption=psk2+ccmp  ---------指定加密模式
+# set wireless.default_radio${devidx}.key=13143344          ---------指定密码（默认无，需要添加）
+
 uci set wireless.default_radio0.disassoc_low_ack=0
 
 uci set wireless.@wifi-device[0].disabled=0  #改为0自动打开wifi
@@ -34,6 +57,39 @@ uci commit
 
 ################################
 
+
+################################
+# 设置默认上网方式: 
+# 如果仅是自用固件，可以在该文件exit 0 上方适当的位置加上加入下列命令，设置Wan网口，添加路由器pppoe拨号账户密码，装好即可上网
+# uci set network.wan.proto='pppoe'
+# uci set network.wan.username='宽带账号'
+# uci set network.wan.password='宽带密码'
+# uci set network.wan.ifname='eth3'   //我的wan接口是eth3，你要根据自己的路由器情况改
+# uci set network.wan6.ifname='eth3'
+# uci commit network   
+
+# 想要修改管理ip地址和lan口配置，可以在该文件exit 0 上方适当的位置加上加上下列命令
+# uci set network.lan.ipaddr='192.168.68.6'    //改成你想要默认的管理ip
+# uci set network.lan.proto='static'          //wan口静态IP方式
+# uci set network.lan.type='bridge'           //设置桥接
+# uci set network.lan.ifname='eth0 eth1 eth2 eth4 eth5' //根据自己的路由器情况改Lan口 
+# uci commit network
+################################
+
+################################
+# 7）更改openwrt后台web登陆用户名方法
+# 1.修改/etc/passwd
+# 将root:x:0:0:root:/root:/bin/ash修改为username:x:0:0:root:/root:/bin/ash。
+# 
+# 2.修改/etc/shadow
+# 将root:xxxxxx:0:0:99999:7:::修改为username:xxxxxx:0:0:99999:7:::。
+# 
+# 3.修改/usr/lib/lua/luci/controller/admin/index.lua
+# 将page.sysauth = {“root”}修改为page.sysauth = {“username”}。
+# 
+# 4.修改/usr/lib/lua/luci/controller/admin/servicectl.lua
+# 将entry({“servicectl”}, alias(“servicectl”, “status”)).sysauth = {“root”}修改为entry({“servicectl”}, alias(“servicectl”, “status”)).sysauth = {“username”}。
+################################
 
 rm -f /usr/lib/lua/luci/view/admin_status/index/mwan.htm
 rm -f /usr/lib/lua/luci/view/admin_status/index/upnp.htm
@@ -87,6 +143,10 @@ echo "log-facility=/dev/null" >> /etc/dnsmasq.conf
 sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/g' /etc/ssh/sshd_config
 sed -i 's/PermitRootLogin prohibit-password/PermitRootLogin yes/g' /etc/ssh/sshd_config
 service sshd restart
+
+# change the current theme to design.
+# ! BE CAREFUL: must select he design theme at .config file first 
+sed -i "s/\(option mediaurlbase '\/luci-static\/\).*'$/\1design'/" /etc/config/luci
 
 rm -rf /tmp/luci-modulecache/
 rm -f /tmp/luci-indexcache
