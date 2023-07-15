@@ -35,6 +35,24 @@ uci commit
 ################################
 
 
+################################
+# 设置默认上网方式: 
+# 如果仅是自用固件，可以在该文件exit 0 上方适当的位置加上加入下列命令，设置Wan网口，添加路由器pppoe拨号账户密码，装好即可上网
+# uci set network.wan.proto='pppoe'
+# uci set network.wan.username='宽带账号'
+# uci set network.wan.password='宽带密码'
+# uci set network.wan.ifname='eth3'   //我的wan接口是eth3，你要根据自己的路由器情况改
+# uci set network.wan6.ifname='eth3'
+# uci commit network   
+
+# 想要修改管理ip地址和lan口配置，可以在该文件exit 0 上方适当的位置加上加上下列命令
+# uci set network.lan.ipaddr='192.168.68.6'    //改成你想要默认的管理ip
+# uci set network.lan.proto='static'          //wan口静态IP方式
+# uci set network.lan.type='bridge'           //设置桥接
+# uci set network.lan.ifname='eth0 eth1 eth2 eth4 eth5' //根据自己的路由器情况改Lan口 
+# uci commit network
+################################
+
 rm -f /usr/lib/lua/luci/view/admin_status/index/mwan.htm
 rm -f /usr/lib/lua/luci/view/admin_status/index/upnp.htm
 rm -f /usr/lib/lua/luci/view/admin_status/index/ddns.htm
