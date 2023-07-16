@@ -146,7 +146,7 @@ service sshd restart
 
 # change the current theme to design.
 # ! BE CAREFUL: must select he design theme at .config file first 
-sed -i "s/\(option mediaurlbase '\/luci-static\/\).*'$/\1design'/" /etc/config/luci
+sed -i "s/\(option mediaurlbase '\/luci-static\/\).*'$/\1material'/" /etc/config/luci
 
 rm -rf /tmp/luci-modulecache/
 rm -f /tmp/luci-indexcache
