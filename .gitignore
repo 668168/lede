@@ -30,6 +30,6 @@ git-src
 .cproject
 .ccache
 .vscode*
-build.log
+*.log
 *gz
 file/etc-origin
